@@ -254,8 +254,28 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
  }
 
 
-  //void VisitSolver::distance_euc( string from, string to){
-  //} 
+// This function i used to compute the euclidean distance between two waypoints
+double VisitSolver::euclideanDist(string from, string to){
+  map <string, string> regions;
+
+  // Mapping the regions to their corresponding waypoints
+  for(int i = 0; i < 30; i++) {
+     regions[reg[i]] = wp[i];
+  }
+
+  // Extracting the coordinates of the two waypoints
+  double x1 = waypoint[regions[from]].at(0);     
+  double y1 = waypoint[regions[from]].at(1);
+  
+  double x2 = waypoint[regions[to]].at(0);
+  double y2 = waypoint[regions[to]].at(1);
+    
+  // Computing the Euclidean distance using the coordinates
+  distance = sqrt(pow((x2-x1),2) + pow((y2-y1),2));    
+
+  // Returning the computed distance
+  return distance;
+}
 
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
     constexpr int numWaypoints = 30;       // Total number of waypoints

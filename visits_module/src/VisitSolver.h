@@ -53,6 +53,7 @@ public:
      
 
     void parseParameters(string parameters);
+    double distance_euc(string from, string to);
  
 
 private:
