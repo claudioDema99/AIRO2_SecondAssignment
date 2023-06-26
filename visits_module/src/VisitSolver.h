@@ -44,6 +44,7 @@ public:
    
     void parseWaypoint(string waypoint_file);
     void parseLandmark(string landmark_file);
+    void randWaypointGenerator(string waypoint_file);
     
     map<string, vector<string>> region_mapping;
     vector <string> source, target;
