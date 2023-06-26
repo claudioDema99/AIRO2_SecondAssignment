@@ -65,12 +65,12 @@ int main(int argc, char **argv) {
     region.push_back("r29"); 
   
     // store the initial state fluents
-    for (int i=0; i<region.size(); i++)   { 
-    for(int j=0; j<region.size(); j++){
-       if (i != j){       
-        initialState["(triggered " + region[i] + " " + region[j]+")"] = 0;
-       }
-    }
+    for (int i=0; i<region.size(); i++){ 
+        for(int j=0; j<region.size(); j++){
+            if (i != j){       
+                initialState["(triggered " + region[i] + " " + region[j]+")"] = 0;
+            }
+        }
     }   
     return 0;
 }
