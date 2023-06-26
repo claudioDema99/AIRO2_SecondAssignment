@@ -29,7 +29,7 @@
 
 (:action visit_region
 		:parameters (?v - robot ?r - region)
-		:duration (robot_in ?v ?r)
+		:precondition (robot_in ?v ?r)
 		:effect (visited ?r)
 )
 
