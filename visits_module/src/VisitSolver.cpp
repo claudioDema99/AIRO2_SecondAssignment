@@ -58,7 +58,6 @@ void VisitSolver::loadSolver(string *parameters, int n){
   // initialize the starting position of the robot as r0 (0,0)
   starting_position = "r0";
   string Paramers = parameters[0];
-  int k;
 
   char const *x[]={"dummy"};
   char const *y[]={"act-cost","triggered"};

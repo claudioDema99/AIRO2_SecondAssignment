@@ -46,8 +46,9 @@ public:
     void parseLandmark(string landmark_file);
      
     map<string, vector<string>> region_mapping;
-    vector <string> source, target; 
+    vector <string> source, target;
     string starting_position;
+    int k;
      
    
    
