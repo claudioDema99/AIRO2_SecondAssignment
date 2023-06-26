@@ -9,7 +9,7 @@
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
@@ -44,14 +44,13 @@ public:
    
     void parseWaypoint(string waypoint_file);
     void parseLandmark(string landmark_file);
-     
+    
     map<string, vector<string>> region_mapping;
     vector <string> source, target;
     string starting_position;
     int k;
      
-   
-   
+
     void parseParameters(string parameters);
  
 
