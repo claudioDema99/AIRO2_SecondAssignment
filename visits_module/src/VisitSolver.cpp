@@ -55,8 +55,10 @@ VisitSolver::~VisitSolver(){
 }
 
 void VisitSolver::loadSolver(string *parameters, int n){
+  // initialize the starting position of the robot as r0 (0,0)
   starting_position = "r0";
   string Paramers = parameters[0];
+  int k;
 
   char const *x[]={"dummy"};
   char const *y[]={"act-cost","triggered"};
@@ -69,9 +71,24 @@ void VisitSolver::loadSolver(string *parameters, int n){
 
   string landmark_file = "visits_domain/landmark.txt";  // change this to the correct path
   parseLandmark(landmark_file);
+  do {
+        std::cout << "Please insert the number of links between nodes (the number should be between 5 and 30): " << std::endl;
+        std::cin >> k;
+        std::cout << std::endl;
+        
+        if (k < 5 || k > 30) {
+            std::cout << "Error! Please insert a value between 5 and 30" << std::endl;
+        }
+        
+    } while (k < 5 || k > 30);
+    
+    std::cout << "Valid value entered: " << k << std::endl;
 
+    string waypoint_file = "./waypoint.txt";
+    //gen_rnd(waypoint_file);                             
+    parseWaypoint(waypoint_file);
 
-        //startEKF();
+    //build_graph();                                        
 }
 
 map<string,double> VisitSolver::callExternalSolver(map<string,double> initialState,bool isHeuristic){
