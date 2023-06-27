@@ -36,7 +36,8 @@
 using namespace std;
 using namespace arma;
 
-
+constexpr int numWaypoints = 30;       // Total number of waypoints
+constexpr int numCoordinates = 3;      // Number of coordinates of the waypoint
 
     //map <string, vector<double> > region_mapping;
 
@@ -280,8 +281,7 @@ double VisitSolver::euclideanDist(string from, string to){
 
 // Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
-    constexpr int numWaypoints = 30;       // Total number of waypoints
-    constexpr int numCoordinates = 3;      // Number of coordinates of the waypoint
+    // numWaypoints and numCoordinates defined globally
     float waypoints[numWaypoints][numCoordinates];      // Array to store the coordinates of waypoints
 
     std::ofstream outfile(waypoint_file);      // Open the file 
@@ -325,7 +325,70 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
 
 // This function builds a graph connecting each waypoint to a maximum of k other waypoints
 void VisitSolver::buildGraph(){
-  // Nota: Una volta finita la funzione scommentare in loadsolver e mettere il nome appropriato
+// Nota1: Una volta finita la funzione scommentare in loadsolver e mettere il nome appropriato
+// Nota2: Da modificare, troppo identica a quella degli altri. Non mi è troppo chiara la parte interna al while
+  int flag = 0;     // Used to avoid infinite loops
+  int min_dist_idx;
+  int numConnections[numWaypoints] = {};      // Tracks the number of connections for each waypoint
+
+  // Iterate over each waypoint
+  for (int i = 0; i < numWaypoints; i++) {
+      flag = 0;
+
+      // Compute the distance between every pair of waypoints and store the result in the dist_matrix
+      for (int j = 0; j < numWaypoints; j++) {
+
+          if (i != j) {
+              // Convert waypoint indices to strings and add prefix 'r'
+              string waypoint_from = "r" + to_string(i) ;
+              string waypoint_to = "r" + to_string(j);
+
+              // Compute Euclidean distance between waypoints 'from' and 'to'
+              dist_matrix[i][j] = distance_euc(waypoint_from , waypoint_to);
+
+              // Store the distance in an array for finding minimum distances
+              dist_array[j] = dist_matrix[i][j]; 
+          } 
+          else {
+              // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
+              // Since that if i=j, then it does not makes sense to compute a distance 
+              // And we want to set something as high as possible so that it could not be detected as a minimum
+              // It could also be possible to omit the else statement (?? it depends on the other functions)
+              dist_matrix[i][j] = 1000.0; 
+              dist_array[j] = dist_matrix[i][j];
+          }
+      }
+
+      // Connect the current waypoint to the closest waypoints until the number of connections reaches k
+      while (numConnections[i] < k && flag < numWaypoints) {
+          // Find the index of the minimum distance in an array
+          min_dist_idx = findMinimumIndex(); 
+
+          if (numConnections[min_dist_idx] < k) {
+              // If the closest waypoint is not already connected to k waypoints, connect it to the current one
+              adj_matrix[i][min_dist_idx] = 1;
+              adj_matrix[min_dist_idx][i] = 1;
+              numConnections[i]++;
+              numConnections[min_dist_idx]++;
+          } 
+          else {
+              flag++; 
+          }
+      }
+  }
+}
+
+// This function finds the index of the minimum element inside the dist_array 
+int VisitSolver::findMinimumIndex() {
+    int minIndex = 0; 
+
+    for (int i = 1; i < numWaypoints; i++) {
+        if (dist_array[i] < dist_array[minIndex]) {
+            minIndex = i;
+        }
+    }
+
+    return minIndex;
 }
 
 
