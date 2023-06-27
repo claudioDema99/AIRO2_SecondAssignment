@@ -19,14 +19,14 @@
 (:predicates
 	(robot_in ?v - robot ?r - region) 
 	(visited ?r - region )
-	(collected ?r - region)   
 )
 
 	(:functions
 		(act-cost)
 		(triggered ?from ?to - region)
 		(dummy)
-		(get ?r - region)
+		(report ?r - region)
+		(to_collect)
 )
 
 (:durative-action localize
@@ -44,14 +44,11 @@
 		:effect (visited ?r)
 )
 
-(:durative-action collect
+(:action collect
 	:parameters (?v - robot ?r - region)
-	:duration (= ?duration 5)
-	:condition (and (at start (robot_in ?v ?r)) (at start (visited ?r)) (at start (> (get ?r) 0)))
-	:effect (and (at end (collected ?r)))
+	:precondition (and (robot_in ?v ?r) (visited ?r) (= (report ?r) 1))
+	:effect (and (decrease (report ?r) 1) (decrease (to_collect) 1))
 )
 
-; (:durative-action deliver)  
-; Maybe could be useful a duractive action for delivering the reports at the submission desk
 )
 

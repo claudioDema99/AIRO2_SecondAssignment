@@ -11,13 +11,12 @@
           (= (act-cost) 0)
           (= (dummy) 0)
 
-    (= (get r1) 1) (= (get r2) 1) (= (get r3) 1) (= (get r4) 1)
+          (= (report r1) 1) (= (report r2) 1) (= (report r3) 1) (= (report r4) 1)
+          (= (to_collect) 2)
 )
 
      (:goal 
-          (and (collected r0) (collected r3) (robot_in R2D2 r5))
-          ; here you can change the collected regions to find a different solution 
-          ; with a different act-cost 
+          (and (= (to_collect) 0) (robot_in R2D2 r5))
      )
 
      (:metric 
