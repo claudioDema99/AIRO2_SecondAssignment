@@ -282,18 +282,28 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
     constexpr int numCoordinates = 3;      // Number of coordinates of the waypoint
     float waypoints[numWaypoints][numCoordinates];      // Array to store the coordinates of waypoints
 
-    std::ofstream outfile(waypoint_file, std::ios::app);      // Open the file directly in append mode
+    std::ofstream outfile(waypoint_file);      // Open the file 
 
     if (!outfile) {
-        std::cerr << "Error opening file: " << waypoint_file << std::endl;
+        std::cerr << "Error opening file... " << std::endl;
         return;
     }
 
-    std::random_device rand;                 // Create a random number generator
-    std::mt19937 gen(rand());                // Seed the generator with a random device 
+    outfile.clear()     // Clear the contents of the file
+
+    // Write on the file the six waypoints that are already known
+    outfile << "wp0[0,0,0]" << std::endl;   
+    outfile << "wp1[-2.5,2.5,0]" << std::endl;
+    outfile << "wp2[2.5,2.5,1.57]" << std::endl;
+    outfile << "wp3[-2.5,-2.5,3.14]" << std::endl;
+    outfile << "wp4[2.5,-2.5,-1.57]" << std::endl;
+    outfile << "wp5[3,0,0]" << std::endl;
+
+    std::random_device random;                 // Create a random number generator
+    std::mt19937 gen(random());                // Seed the generator with a random device 
     std::uniform_real_distribution<> dis(-3.0, 3.0);  // Create a uniform distribution between -3.0 and 3.0
 
-    for (int i = 6; i < numWaypoints; i++) {         // Generate random values for x, y waypoints
+    for (int i = 6; i < numWaypoints; i++) {         // Generate random values for the waypoints
         for (int j = 0; j < numCoordinates; j++) {
             waypoints[i][j] = std::round(dis(gen) * 100.0) / 100.0;   
 
