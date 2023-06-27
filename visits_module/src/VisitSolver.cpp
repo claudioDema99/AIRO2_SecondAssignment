@@ -86,7 +86,7 @@ void VisitSolver::loadSolver(string *parameters, int n){
     std::cout << "Valid value entered: " << k << std::endl;
 
     string waypoint_file = "./waypoint.txt";
-    //gen_rnd(waypoint_file);                             
+    randWaypointGenerator(waypoint_file);                             
     parseWaypoint(waypoint_file);
 
     //build_graph();                                        
@@ -256,6 +256,7 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
 
 // This function i used to compute the euclidean distance between two waypoints
 double VisitSolver::euclideanDist(string from, string to){
+  // Nota: Una volta finita la funzione scommentare in callexternalsolver e mettere il nome appropriato
   map <string, string> regions;
 
   // Mapping the regions to their corresponding waypoints
@@ -320,6 +321,11 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
     }
 
     outfile.close();   // Close the file
+}
+
+// This function builds a graph connecting each waypoint to a maximum of k other waypoints
+void VisitSolver::buildGraph(){
+  // Nota: Una volta finita la funzione scommentare in loadsolver e mettere il nome appropriato
 }
 
 
