@@ -296,16 +296,17 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
     // Write on the file the six waypoints that are already known
     outfile << "wp0[0,0,0]" << std::endl;   
     outfile << "wp1[-2.5,2.5,0]" << std::endl;
-    outfile << "wp2[2.5,2.5,1.57]" << std::endl;
-    outfile << "wp3[-2.5,-2.5,3.14]" << std::endl;
-    outfile << "wp4[2.5,-2.5,-1.57]" << std::endl;
+    outfile << "wp2[2.5,2.5,0]" << std::endl;
+    outfile << "wp3[-2.5,-2.5,0]" << std::endl;
+    outfile << "wp4[2.5,-2.5,0]" << std::endl;
     outfile << "wp5[3,0,0]" << std::endl;
 
-    std::random_device random;                 // Create a random number generator
-    std::mt19937 gen(random());                // Seed the generator with a random device 
-    std::uniform_real_distribution<> dis(-3.0, 3.0);  // Create a uniform distribution between -3.0 and 3.0
+    std::random_device random;         // Create a random number generator
+    std::mt19937 gen(random());        // Seed the generator with a random device 
+    std::uniform_real_distribution<> dis(-3.0, 3.0);      // Create a uniform distribution between -3.0 and 3.0
 
-    for (int i = 6; i < numWaypoints; i++) {         // Generate random values for the waypoints
+    // Generate random x and y values for the waypoints
+    for (int i = 6; i < numWaypoints; i++) {         
         for (int j = 0; j < numCoordinates; j++) {
             waypoints[i][j] = std::round(dis(gen) * 100.0) / 100.0;   
 
@@ -315,7 +316,7 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
             else if (j == 1) {
                 outfile << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
             } else {
-                outfile << std::fixed << std::setprecision(2) << waypoints[i][j] << "]" << std::endl;
+                outfile << 0 << "]" << std::endl;
             }
         }
     }
