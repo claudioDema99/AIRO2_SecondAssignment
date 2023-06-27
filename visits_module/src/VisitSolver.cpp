@@ -297,11 +297,13 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
         for (int j = 0; j < numCoordinates; j++) {
             waypoints[i][j] = std::round(dis(gen) * 100.0) / 100.0;   
 
-            outfile << "wp" << i << "[" << std::fixed << std::setprecision(2) << waypoints[i][j];
-            if (j < 2) {
-                outfile << ",";
+            if (j == 0) {
+              outfile << "wp" << i << "[" << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
+            }
+            else if (j == 1) {
+                outfile << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
             } else {
-                outfile << "]" << std::endl;
+                outfile << std::fixed << std::setprecision(2) << waypoints[i][j] << "]" << std::endl;
             }
         }
     }
