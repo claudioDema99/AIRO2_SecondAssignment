@@ -277,6 +277,7 @@ double VisitSolver::euclideanDist(string from, string to){
   return distance;
 }
 
+// Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
     constexpr int numWaypoints = 30;       // Total number of waypoints
     constexpr int numCoordinates = 3;      // Number of coordinates of the waypoint
