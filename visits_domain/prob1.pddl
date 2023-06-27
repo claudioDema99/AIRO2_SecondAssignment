@@ -16,6 +16,8 @@
 
      (:goal 
           (and (collected r0) (collected r3) (robot_in Rob r4))
+          ; here you can change the collected regions to find a different solution 
+          ; with a different act-cost 
      )
 
      (:metric 
