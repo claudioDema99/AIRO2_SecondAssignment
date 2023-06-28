@@ -36,9 +36,6 @@
 using namespace std;
 using namespace arma;
 
-constexpr int numWaypoints = 30;       // Total number of waypoints
-constexpr int numCoordinates = 3;      // Number of coordinates of the waypoint
-
     //map <string, vector<double> > region_mapping;
 
 extern "C" ExternalSolver* create_object(){
