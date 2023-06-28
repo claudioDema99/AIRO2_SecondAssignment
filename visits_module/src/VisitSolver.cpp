@@ -36,8 +36,6 @@
 using namespace std;
 using namespace arma;
 
-    //map <string, vector<double> > region_mapping;
-
 extern "C" ExternalSolver* create_object(){
   return new VisitSolver();
 }
@@ -46,13 +44,9 @@ extern "C" void destroy_object(ExternalSolver *externalSolver){
   delete externalSolver;
 }
 
-VisitSolver::VisitSolver(){
+VisitSolver::VisitSolver(){}
 
-}
-
-VisitSolver::~VisitSolver(){
-
-}
+VisitSolver::~VisitSolver(){}
 
 void VisitSolver::loadSolver(string *parameters, int n){
   // initialize the starting position of the robot as r0 (0,0)
@@ -65,11 +59,11 @@ void VisitSolver::loadSolver(string *parameters, int n){
   affected = list<string>(x,x+1);
   dependencies = list<string>(y,y+2);
 
-  string waypoint_file = "visits_domain/waypoint.txt";   // change this to the correct path
+  string waypoint_file = "visits_domain/waypoint.txt";  
   parseWaypoint(waypoint_file);
 
-  string landmark_file = "visits_domain/landmark.txt";  // change this to the correct path
-  parseLandmark(landmark_file);
+  //string landmark_file = "visits_domain/landmark.txt";
+  //parseLandmark(landmark_file);
   do {
         std::cout << "Please insert the number of links between nodes (the number should be between 5 and 30): " << std::endl;
         std::cin >> k;
@@ -87,7 +81,7 @@ void VisitSolver::loadSolver(string *parameters, int n){
     randWaypointGenerator(waypoint_file);                             
     parseWaypoint(waypoint_file);
 
-    //build_graph();                                        
+    buildGraph();                                        
 }
 
 map<string,double> VisitSolver::callExternalSolver(map<string,double> initialState,bool isHeuristic){
@@ -124,8 +118,7 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
       string from = tmp.substr(0,2);   // from and to are regions, need to extract wps (poses)
       string to = tmp.substr(3,2);
 
-
-     // distance_euc(from, to);
+      // da aggiungere un paio di righe qua per il compute_path
 
     }
   }
@@ -223,7 +216,7 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
 
    }
 
-   void VisitSolver::parseLandmark(string landmark_file){
+/*    void VisitSolver::parseLandmark(string landmark_file){
 
      int curr, next;
      string line;
@@ -249,7 +242,7 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
      }
    }
    
- }
+ } */
 
 
 // This function i used to compute the euclidean distance between two waypoints
