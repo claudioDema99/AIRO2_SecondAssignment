@@ -17,19 +17,21 @@
 	)
 
 (:predicates
-	(robot_in ?v - robot ?r - region) 
-	(visited ?r - region )
+		(robot_in ?v - robot ?r - region) 
+		(submission_desk ?r - region )
+		(given_reports)
 )
 
 	(:functions
 		(act-cost)
 		(triggered ?from ?to - region)
 		(dummy)
-		(report ?r - region)
-		(to_collect)
+		(reports_in ?r - region)
+		(collected)
+		(total_reports)
 )
 
-(:durative-action localize
+(:durative-action move
 		:parameters (?v - robot ?from ?to - region)
 		:duration (= ?duration 100)
 		:condition (and (at start (robot_in ?v ?from)))
@@ -38,16 +40,16 @@
             			(at end (increase (act-cost) (dummy))))
 )
 
-(:action visit_region
+(:action collect
 		:parameters (?v - robot ?r - region)
-		:precondition (robot_in ?v ?r)
-		:effect (visited ?r)
+		:precondition (and (robot_in ?v ?r) (> (reports_in ?r) 0))
+		:effect (and (decrease (reports_in ?r) 1) (increase (collected) 1))
 )
 
-(:action collect
-	:parameters (?v - robot ?r - region)
-	:precondition (and (robot_in ?v ?r) (visited ?r) (= (report ?r) 1))
-	:effect (and (decrease (report ?r) 1) (decrease (to_collect) 1))
+(:action deliver
+		:parameters (?v - robot ?r - region)
+		:precondition (and (robot_in ?v ?r) (submission_desk ?r) (>= (collected) (total_reports)))
+		:effect (and (assign (collected) 0) (given_reports))
 )
 
 )

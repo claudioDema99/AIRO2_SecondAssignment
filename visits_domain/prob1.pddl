@@ -6,17 +6,19 @@
 )
 
      (:init
-          (robot_in Rob r0)
+          (robot_in R2D2 r0)
+          (submission_desk r5)
 
           (= (act-cost) 0)
           (= (dummy) 0)
 
+          (= (total_reports) 2)
           (= (report r1) 1) (= (report r2) 1) (= (report r3) 1) (= (report r4) 1)
-          (= (to_collect) 2)
+          (= (collected) 0)
 )
 
      (:goal 
-          (and (= (to_collect) 0) (robot_in R2D2 r5))
+          (and (given_reports))
      )
 
      (:metric 
