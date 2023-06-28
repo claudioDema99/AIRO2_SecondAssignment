@@ -269,6 +269,7 @@ double VisitSolver::euclideanDist(string from, string to){
   return distance;
 }
 
+
 // Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
     // numWaypoints and numCoordinates defined globally
@@ -317,7 +318,7 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
 // This function builds a graph connecting each waypoint to a maximum of k other waypoints
 void VisitSolver::buildGraph(){
 // Nota1: Una volta finita la funzione scommentare in loadsolver e mettere il nome appropriato
-// Nota2: Da modificare, troppo identica a quella degli altri. Non mi è troppo chiara la parte interna al while
+// Nota2: Da modificare, troppo identica a quella degli altri. Non mi è troppo chiara la parte interna al while sulla adjacency matrix
   int flag = 0;     // Used to avoid infinite loops
   int min_dist_idx;
   int numConnections[numWaypoints] = {};      // Tracks the number of connections for each waypoint
@@ -353,7 +354,7 @@ void VisitSolver::buildGraph(){
       // Connect the current waypoint to the closest waypoints until the number of connections reaches k
       while (numConnections[i] < k && flag < numWaypoints) {
           // Find the index of the minimum distance in an array
-          min_dist_idx = findMinimumIndex(); 
+          min_dist_idx = findMinimumIndex(dist_array); 
 
           if (numConnections[min_dist_idx] < k) {
               // If the closest waypoint is not already connected to k waypoints, connect it to the current one
@@ -370,15 +371,19 @@ void VisitSolver::buildGraph(){
 }
 
 // This function finds the index of the minimum element inside the dist_array 
-int VisitSolver::findMinimumIndex() {
-    int minIndex = 0; 
+int VisitSolver::findMinimumIndex(double dist_array[]) {
+    int minIndex = 0;
 
     for (int i = 1; i < numWaypoints; i++) {
         if (dist_array[i] < dist_array[minIndex]) {
-            minIndex = i;
+            minIndex = i;    // Update the minIndex if a smaller element is found
         }
     }
 
+    // Set the minimum element to a large value to mark it as visited
+    dist_array[minIndex] = 1000.0;     
+
+    // Return the index of the minimum element
     return minIndex;
 }
 
