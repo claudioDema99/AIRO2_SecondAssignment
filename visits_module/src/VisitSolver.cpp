@@ -317,8 +317,6 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
 
 // This function builds a graph connecting each waypoint to a maximum of k other waypoints
 void VisitSolver::buildGraph(){
-// Nota1: Una volta finita la funzione scommentare in loadsolver e mettere il nome appropriato
-// Nota2: Da modificare, troppo identica a quella degli altri. Non mi è troppo chiara la parte interna al while sulla adjacency matrix
   int flag = 0;     // Used to avoid infinite loops
   int min_dist_idx;
   int numConnections[numWaypoints] = {};      // Tracks the number of connections for each waypoint
@@ -387,8 +385,78 @@ int VisitSolver::findMinimumIndex(double dist_array[]) {
     return minIndex;
 }
 
+// A useful function to find the vertex with minimum distance value, 
+// from the set of vertices not yet included in shortest path tree
+int minDistance(int dist[], bool visited[])
+{
+    // Initialize min value
+    int min = 1000.0;
+    int min_index = -1;
+ 
+    for (int i = 0; i < numWaypoints; i++)
+        if (visited[i] == false && dist[i] <= min)
+            min = dist[i], min_index = i;
+ 
+    return min_index;
+}
 
+// Extract Num DA RIFARE
+int VisitSolver::extract_num(string str)
+{
+  string num; // Initialize an empty string to store extracted digits from the input string
 
+  // Iterate over each character in the input string
+  for (char c : str)
+  {
+    // Check if the character is a digit
+    if (isdigit(c))
+      num += c; // If it is a digit, append it to the 'num' string
+  }
+  
+  if (num.empty()) return -1; // If 'num' is empty, no digits were found, so return -1
+  
+  return stoi(num); // Convert the extracted digits in 'num' to an integer and return it
+}
 
+// Function that implements Dijkstra's single source shortest path algorithm 
+// for a graph represented using adjacency matrix representation
+double VisitSolver::compute_path(string from, string to)
+{
+  // Extract the start and end indices
+  int from_idx = extract_num(from);
+  int to_idx = extract_num(to);
 
+  // visited[i] will be true if vertex i is included in shortest path tree or shortest distance from from_idx to i is finalized
+  bool visited[numWaypoints] = {false};
+  // The output array.  dist[i] will hold the shortest distance from from_idx to i
+  double dist[numWaypoints]; 
+  // Distance of from_idx vertex from itself is always 0  
+  dist[from_idx] = 0;
+ 
+  // Initialize all distances as INFINITE
+  for (int i = 0; i < numWaypoints; i++) {
+      dist[i] = 1000.0;
+  }
 
+  // Find shortest path for all vertices
+  for (int i = 0; i < numWaypoints - 1; i++)
+  {
+    // Pick the minimum distance vertex from the set of vertices not yet processed 
+    // u is always equal to from_idx in the first iteration
+    int u = min_dist(dist, visited);
+
+    // Mark the picked vertex as processed
+		visited[u] = true;
+
+    // Update dist value of the adjacent vertices of the picked vertex
+		for (int i = 0; i < numWaypoints; i++)                  
+		{
+      // Update dist[i] only if is not in visited, there is an edge from u to i, and total
+      // weight of path from min_idx to i through u is smaller than current value of dist[i]
+			if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
+				dist[i] = dist[u] + adj_matrix[u][i];
+		}
+  }
+
+  return dist[to_idx];
+}
