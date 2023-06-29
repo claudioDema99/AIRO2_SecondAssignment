@@ -88,7 +88,6 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
   double dummy;
   double act_cost;
 
-
   map<string, double> trigger;
 
   for(;iSIt!=isEnd;++iSIt){
@@ -111,23 +110,23 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
         trigger[arg] = value>0?1:0;
         if (value>0){
 
-        string from = tmp.substr(0,2);   // from and to are regions, need to extract wps (poses)
-        string to = tmp.substr(3,2);
+          string from = tmp.substr(0,2);   // from and to are regions, need to extract wps (poses)
+          string to = tmp.substr(3,2);
 
-        // da aggiungere un paio di righe qua per il compute_path
-
+          // The cost is equal to the total path covered by the robot
+          act_cost = compute_path(from, to)
+          if (act_cost >= 1000.0){
+            act_cost = -1000.0;
+          }
         }
       }
     }else{
       if(function=="dummy"){
-        dummy = value;
-
-      }else if(function=="act-cost"){
+        dummy = act_cost;
+      }
+      else if(function=="act-cost"){
         act_cost = value;
-      } //else if(function=="dummy1"){
-                        //duy = value;              
-                        ////cout << parameter << " " << value << endl;
-                    //}
+      } 
     }
   }
   
@@ -173,11 +172,11 @@ void VisitSolver::parseParameters(string parameters){
   }
 }
 
-
+// DA VEDERE
 double VisitSolver::calculateExtern(double external, double total_cost){
   //float random1 = static_cast <float> (rand())/static_cast <float>(RAND_MAX);
-  double cost = 2;//random1;
-  return cost;
+  //double cost = 2;//random1;
+  return total_cost;
 }
 
 void VisitSolver::parseWaypoint(string waypoint_file){
@@ -206,35 +205,6 @@ void VisitSolver::parseWaypoint(string waypoint_file){
     }
   }
 }
-
-/*    void VisitSolver::parseLandmark(string landmark_file){
-
-     int curr, next;
-     string line;
-     double pose1, pose2, pose3;
-     ifstream parametersFile(landmark_file);
-     if (parametersFile.is_open()){
-      while (getline(parametersFile,line)){
-       curr=line.find("[");
-       string landmark_name = line.substr(0,curr).c_str();
-       
-       curr=curr+1;
-       next=line.find(",",curr);
-
-       pose1 = (double)atof(line.substr(curr,next-curr).c_str());
-       curr=next+1; next=line.find(",",curr);
-
-       pose2 = (double)atof(line.substr(curr,next-curr).c_str());
-       curr=next+1; next=line.find("]",curr);
-
-       pose3 = (double)atof(line.substr(curr,next-curr).c_str());
-
-       landmark[landmark_name] = vector<double> {pose1, pose2, pose3};
-     }
-   }
-   
- } */
-
 
 // This function i used to compute the euclidean distance between two waypoints
 double VisitSolver::euclideanDist(string from, string to){
