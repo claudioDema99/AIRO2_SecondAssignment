@@ -115,106 +115,101 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
         trigger[arg] = value>0?1:0;
         if (value>0){
 
-      string from = tmp.substr(0,2);   // from and to are regions, need to extract wps (poses)
-      string to = tmp.substr(3,2);
+        string from = tmp.substr(0,2);   // from and to are regions, need to extract wps (poses)
+        string to = tmp.substr(3,2);
 
-      // da aggiungere un paio di righe qua per il compute_path
+        // da aggiungere un paio di righe qua per il compute_path
 
+        }
+      }
+    }else{
+      if(function=="dummy"){
+        dummy = value;
+
+      }else if(function=="act-cost"){
+        act_cost = value;
+      } //else if(function=="dummy1"){
+                        //duy = value;              
+                        ////cout << parameter << " " << value << endl;
+                    //}
     }
   }
-}else{
-  if(function=="dummy"){
-    dummy = value;
+  
+  double results = calculateExtern(dummy, act_cost);
+  if (ExternalSolver::verbose){
+    cout << "(dummy) " << results << endl;
+  }
 
-  }else if(function=="act-cost"){
-    act_cost = value;
-                 } //else if(function=="dummy1"){
-                    //duy = value;              
-                    ////cout << parameter << " " << value << endl;
-                 //}
-                 }
-               }
+  toReturn["(dummy)"] = results;
+  return toReturn;
+}
 
 
-               double results = calculateExtern(dummy, act_cost);
-               if (ExternalSolver::verbose){
-                cout << "(dummy) " << results << endl;
-              }
+list<string> VisitSolver::getParameters(){
 
-              toReturn["(dummy)"] = results;
+  return affected;
+}
 
-
-              return toReturn;
-            }
-
-            list<string> VisitSolver::getParameters(){
-
-              return affected;
-            }
-
-            list<string> VisitSolver::getDependencies(){
-
-              return dependencies;
-            }
+list<string> VisitSolver::getDependencies(){
+  
+  return dependencies;
+}
 
 
-            void VisitSolver::parseParameters(string parameters){
+void VisitSolver::parseParameters(string parameters){
 
-              int curr, next;
-              string line;
-              ifstream parametersFile(parameters.c_str());
-              if (parametersFile.is_open()){
-                while (getline(parametersFile,line)){
-                 curr=line.find(" ");
-                 string region_name = line.substr(0,curr).c_str();
-                 curr=curr+1;
-                 while(true ){
-                  next=line.find(" ",curr);
-                  region_mapping[region_name].push_back(line.substr(curr,next-curr).c_str());
-                  if (next ==-1)
-                   break;
-                 curr=next+1;
+  int curr, next;
+  string line;
+  ifstream parametersFile(parameters.c_str());
+  if (parametersFile.is_open()){
+    while (getline(parametersFile,line)){
+      curr=line.find(" ");
+      string region_name = line.substr(0,curr).c_str();
+      curr=curr+1;
+      while(true ){
+        next=line.find(" ",curr);
+        region_mapping[region_name].push_back(line.substr(curr,next-curr).c_str());
+        if (next ==-1)
+          break;
+        curr=next+1;
+      }                
+    }
+  }
+}
 
-               }                
-             }
 
-           }
+double VisitSolver::calculateExtern(double external, double total_cost){
+  //float random1 = static_cast <float> (rand())/static_cast <float>(RAND_MAX);
+  double cost = 2;//random1;
+  return cost;
+}
 
-         }
+void VisitSolver::parseWaypoint(string waypoint_file){
 
-         double VisitSolver::calculateExtern(double external, double total_cost){
-       //float random1 = static_cast <float> (rand())/static_cast <float>(RAND_MAX);
-       double cost = 2;//random1;
-       return cost;
-     }
+  int curr, next;
+  string line;
+  double pose1, pose2, pose3;
+  ifstream parametersFile(waypoint_file);
+  if (parametersFile.is_open()){
+    while (getline(parametersFile,line)){
+      curr=line.find("[");
+      string waypoint_name = line.substr(0,curr).c_str();
 
-     void VisitSolver::parseWaypoint(string waypoint_file){
+      curr=curr+1;
+      next=line.find(",",curr);
 
-       int curr, next;
-       string line;
-       double pose1, pose2, pose3;
-       ifstream parametersFile(waypoint_file);
-       if (parametersFile.is_open()){
-        while (getline(parametersFile,line)){
-         curr=line.find("[");
-         string waypoint_name = line.substr(0,curr).c_str();
+      pose1 = (double)atof(line.substr(curr,next-curr).c_str());
+      curr=next+1; next=line.find(",",curr);
 
-         curr=curr+1;
-         next=line.find(",",curr);
+      pose2 = (double)atof(line.substr(curr,next-curr).c_str());
+      curr=next+1; next=line.find("]",curr);
 
-         pose1 = (double)atof(line.substr(curr,next-curr).c_str());
-         curr=next+1; next=line.find(",",curr);
+      pose3 = (double)atof(line.substr(curr,next-curr).c_str());
 
-         pose2 = (double)atof(line.substr(curr,next-curr).c_str());
-         curr=next+1; next=line.find("]",curr);
-
-         pose3 = (double)atof(line.substr(curr,next-curr).c_str());
-
-         waypoint[waypoint_name] = vector<double> {pose1, pose2, pose3};
-       }
-     }
-
-   }
+      waypoint[waypoint_name] = vector<double> {pose1, pose2, pose3};
+    }
+  }
+}
 
 /*    void VisitSolver::parseLandmark(string landmark_file){
 
@@ -282,7 +277,7 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
         return;
     }
 
-    outfile.clear()     // Clear the contents of the file
+    outfile.clear();     // Clear the contents of the file
 
     // Write on the file the six waypoints that are already known
     outfile << "wp0[0,0,0]" << std::endl;   
@@ -328,25 +323,25 @@ void VisitSolver::buildGraph(){
       // Compute the distance between every pair of waypoints and store the result in the dist_matrix
       for (int j = 0; j < numWaypoints; j++) {
 
-          if (i != j) {
-              // Convert waypoint indices to strings and add prefix 'r'
-              string waypoint_from = "r" + to_string(i) ;
-              string waypoint_to = "r" + to_string(j);
+        if (i != j) {
+            // Convert waypoint indices to strings and add prefix 'r'
+            string waypoint_from = "r" + to_string(i) ;
+            string waypoint_to = "r" + to_string(j);
 
-              // Compute Euclidean distance between waypoints 'from' and 'to'
-              dist_matrix[i][j] = distance_euc(waypoint_from , waypoint_to);
+            // Compute Euclidean distance between waypoints 'from' and 'to'
+            dist_matrix[i][j] = distance_euc(waypoint_from , waypoint_to);
 
-              // Store the distance in an array for finding minimum distances
-              dist_array[j] = dist_matrix[i][j]; 
-          } 
-          else {
-              // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
-              // Since that if i=j, then it does not makes sense to compute a distance 
-              // And we want to set something as high as possible so that it could not be detected as a minimum
-              // It could also be possible to omit the else statement (?? it depends on the other functions)
-              dist_matrix[i][j] = 1000.0; 
-              dist_array[j] = dist_matrix[i][j];
-          }
+            // Store the distance in an array for finding minimum distances
+            dist_array[j] = dist_matrix[i][j]; 
+        } 
+        else {
+            // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
+            // Since that if i=j, then it does not makes sense to compute a distance 
+            // And we want to set something as high as possible so that it could not be detected as a minimum
+            // It could also be possible to omit the else statement (?? it depends on the other functions)
+            dist_matrix[i][j] = 1000.0; 
+            dist_array[j] = dist_matrix[i][j];
+        }
       }
 
       // Connect the current waypoint to the closest waypoints until the number of connections reaches k
