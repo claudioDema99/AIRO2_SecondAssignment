@@ -13,7 +13,7 @@
           (= (dummy) 0)
 
           (= (total_reports) 2)
-          (= (report r1) 1) (= (report r2) 1) (= (report r3) 1) (= (report r4) 1) 
+          (= (reports_in r1) 1) (= (reports_in r2) 1) (= (reports_in r3) 1) (= (reports_in r4) 1) 
           (= (collected) 0)
      )
 
