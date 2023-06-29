@@ -320,6 +320,49 @@ void VisitSolver::buildGraph(){
   }
 }
 
+// Function that implements Dijkstra's single source shortest path algorithm 
+// for a graph represented using adjacency matrix representation
+double VisitSolver::compute_path(string from, string to)
+{
+  // Extract the start and end indices
+  int from_idx = extract_num(from);
+  int to_idx = extract_num(to);
+
+  // visited[i] will be true if vertex i is included in shortest path tree or shortest distance from from_idx to i is finalized
+  bool visited[numWaypoints] = {false};
+  // The output array.  dist[i] will hold the shortest distance from from_idx to i
+  double dist[numWaypoints]; 
+  // Distance of from_idx vertex from itself is always 0  
+  dist[from_idx] = 0;
+ 
+  // Initialize all distances as INFINITE
+  for (int i = 0; i < numWaypoints; i++) {
+      dist[i] = 1000.0;
+  }
+
+  // Find shortest path for all vertices
+  for (int i = 0; i < numWaypoints - 1; i++)
+  {
+    // Pick the minimum distance vertex from the set of vertices not yet processed 
+    // u is always equal to from_idx in the first iteration
+    int u = min_dist(dist, visited);
+
+    // Mark the picked vertex as processed
+		visited[u] = true;
+
+    // Update dist value of the adjacent vertices of the picked vertex
+		for (int i = 0; i < numWaypoints; i++)                  
+		{
+      // Update dist[i] only if is not in visited, there is an edge from u to i, and total
+      // weight of path from min_idx to i through u is smaller than current value of dist[i]
+			if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
+				dist[i] = dist[u] + adj_matrix[u][i];
+		}
+  }
+
+  return dist[to_idx];
+}
+
 // This function finds the index of the minimum element inside the dist_array 
 int VisitSolver::findMinimumIndex(double dist_array[]) {
     int minIndex = 0;
@@ -368,47 +411,4 @@ int VisitSolver::extract_num(string str)
   if (num.empty()) return -1; // If 'num' is empty, no digits were found, so return -1
   
   return stoi(num); // Convert the extracted digits in 'num' to an integer and return it
-}
-
-// Function that implements Dijkstra's single source shortest path algorithm 
-// for a graph represented using adjacency matrix representation
-double VisitSolver::compute_path(string from, string to)
-{
-  // Extract the start and end indices
-  int from_idx = extract_num(from);
-  int to_idx = extract_num(to);
-
-  // visited[i] will be true if vertex i is included in shortest path tree or shortest distance from from_idx to i is finalized
-  bool visited[numWaypoints] = {false};
-  // The output array.  dist[i] will hold the shortest distance from from_idx to i
-  double dist[numWaypoints]; 
-  // Distance of from_idx vertex from itself is always 0  
-  dist[from_idx] = 0;
- 
-  // Initialize all distances as INFINITE
-  for (int i = 0; i < numWaypoints; i++) {
-      dist[i] = 1000.0;
-  }
-
-  // Find shortest path for all vertices
-  for (int i = 0; i < numWaypoints - 1; i++)
-  {
-    // Pick the minimum distance vertex from the set of vertices not yet processed 
-    // u is always equal to from_idx in the first iteration
-    int u = min_dist(dist, visited);
-
-    // Mark the picked vertex as processed
-		visited[u] = true;
-
-    // Update dist value of the adjacent vertices of the picked vertex
-		for (int i = 0; i < numWaypoints; i++)                  
-		{
-      // Update dist[i] only if is not in visited, there is an edge from u to i, and total
-      // weight of path from min_idx to i through u is smaller than current value of dist[i]
-			if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
-				dist[i] = dist[u] + adj_matrix[u][i];
-		}
-  }
-
-  return dist[to_idx];
 }
