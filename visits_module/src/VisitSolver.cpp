@@ -206,30 +206,21 @@ void VisitSolver::parseWaypoint(string waypoint_file){
   }
 }
 
-// This function i used to compute the euclidean distance between two waypoints
-double VisitSolver::euclideanDist(string from, string to){
-  // Nota: Una volta finita la funzione scommentare in callexternalsolver e mettere il nome appropriato
-  map <string, string> regions;
-
-  // Mapping the regions to their corresponding waypoints
-  for(int i = 0; i < 30; i++) {
-     regions[reg[i]] = wp[i];
-  }
-
-  // Extracting the coordinates of the two waypoints
-  double x1 = waypoint[regions[from]].at(0);     
-  double y1 = waypoint[regions[from]].at(1);
-  
-  double x2 = waypoint[regions[to]].at(0);
-  double y2 = waypoint[regions[to]].at(1);
-    
-  // Computing the Euclidean distance using the coordinates
-  distance = sqrt(pow((x2-x1),2) + pow((y2-y1),2));    
-
-  // Returning the computed distance
-  return distance;
+// Function used to compute the euclidean distance between two waypoints
+double VisitSolver::distance_euc(string from, string to)
+{
+   // Obtaining geometric vectors from region names
+   vector<double> from_wp = waypoint[region_mapping[from][0]];
+   vector<double> to_wp = waypoint[region_mapping[to][0]];
+   
+   // Computing distance (squared) from vectors
+   double distance = 0;
+   for(int i=0; i<2; ++i)
+        distance += pow(from_wp[i] - to_wp[i], 2);
+   
+   // Returning euclidean distance
+   return sqrt(distance);
 }
-
 
 // Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
