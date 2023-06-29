@@ -59,11 +59,7 @@ void VisitSolver::loadSolver(string *parameters, int n){
   affected = list<string>(x,x+1);
   dependencies = list<string>(y,y+2);
 
-  string waypoint_file = "visits_domain/waypoint.txt";  
-  parseWaypoint(waypoint_file);
-
-  //string landmark_file = "visits_domain/landmark.txt";
-  //parseLandmark(landmark_file);
+  // Let the user enter a valid number of links 
   do {
         std::cout << "Please insert the number of links between nodes (the number should be between 5 and 30): " << std::endl;
         std::cin >> k;
