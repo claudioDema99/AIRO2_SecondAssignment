@@ -382,7 +382,7 @@ int VisitSolver::findMinimumIndex(double dist_array[]) {
 
 // A useful function to find the vertex with minimum distance value, 
 // from the set of vertices not yet included in shortest path tree
-int minDistance(int dist[], bool visited[])
+int VisitSolver::minDistance(int dist[], bool visited[])
 {
     // Initialize min value
     int min = 1000.0;
