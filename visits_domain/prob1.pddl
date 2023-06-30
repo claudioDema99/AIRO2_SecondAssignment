@@ -21,8 +21,6 @@
 
      (:goal (and
           (= (to_grab) 0)
-          (= (reports_in r1) 0) ; Here you can change the region to be explored (r1, r2, r3, r4)
-          (= (reports_in r4) 0) ; Here you can change the region to be explored 
           (robot_in R2D2 r5)
 
      ))
