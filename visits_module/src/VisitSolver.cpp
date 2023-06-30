@@ -346,6 +346,7 @@ double VisitSolver::compute_path(string from, string to)
  
   // Initialize all distances as INFINITE
   for (int i = 0; i < numWaypoints; i++) {
+    if (i != from_idx)
       dist[i] = 1000.0;
   }
 
@@ -394,12 +395,12 @@ int VisitSolver::findMinimumIndex(double dist_array[]) {
 int VisitSolver::minDistance(double dist[], bool visited[])
 {
     // Initialize min value
-    int min = 1000.0;
+    double min = 1000.0;
     int min_index = -1;
  
     for (int i = 0; i < numWaypoints; i++)
         if (visited[i] == false && dist[i] <= min)
-            min = dist[i], min_index = i;
+          min = dist[i], min_index = i;
  
     return min_index;
 }
