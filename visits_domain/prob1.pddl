@@ -7,23 +7,28 @@
 
      (:init
           (robot_in R2D2 r0)
-          (submission_desk r5)
-
+  
           (= (act-cost) 0)
           (= (dummy) 0)
 
-          (= (total_reports) 2)
-          (= (reports_in r1) 1) (= (reports_in r2) 1) (= (reports_in r3) 1) (= (reports_in r4) 1) 
-          (= (collected) 0)
+          (= (reports_in r1) 1)
+          (= (reports_in r2) 1)
+          (= (reports_in r3) 1)
+          (= (reports_in r4) 1)
+
+          (= (to_grab) 2)
      )
 
-     (:goal 
-          (and (given_reports))
-     )
+     (:goal (and
+          (= (to_grab) 0)
+          (= (reports_in r1) 0) ; Here you can change the region to be explored (r1, r2, r3, r4)
+          (= (reports_in r4) 0) ; Here you can change the region to be explored 
+          (robot_in R2D2 r5)
 
-     (:metric 
-          minimize (act-cost)
-     )
+     ))
+
+     (:metric minimize (act-cost))
 )
+
 
 
