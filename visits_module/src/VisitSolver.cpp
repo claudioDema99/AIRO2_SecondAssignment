@@ -178,10 +178,8 @@ void VisitSolver::parseParameters(string parameters){
   }
 }
 
-// DA VEDERE
+
 double VisitSolver::calculateExtern(double external, double total_cost){
-  //float random1 = static_cast <float> (rand())/static_cast <float>(RAND_MAX);
-  //double cost = 2;//random1;
   return total_cost;
 }
 
@@ -262,54 +260,41 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
 
 // This function builds a graph connecting each waypoint to a maximum of k other waypoints
 void VisitSolver::buildGraph(){
-  int flag = 0;     // Used to avoid infinite loops
   int min_dist_idx;
-  int numConnections[numWaypoints] = { 0 };      // Tracks the number of connections for each waypoint
+  int numConnections[numWaypoints] = { 0 };  
+  double node_i_distances[numWaypoints];
 
-  // Iterate over each waypoint
-  for (int i = 0; i < numWaypoints; i++) {
-      flag = 0;
+  // Compute the distances between all the waypoints
+  for (int i = 0; i < numWaypoints; i++)
+  {
+    string from = "wp" + to_string(i);
 
-      // Compute the distance between every pair of waypoints and store the result in the dist_matrix
-      for (int j = 0; j < numWaypoints; j++) {
+    for (int j = 0; j < numWaypoints; j++)
+    {
+      string to = "wp" + to_string(j);
+      dist_matrix[i][j] = (i != j) ? distance_euc(from, to) : 1000.0;
+    }
+  }
 
-        if (i != j) {
-            // Convert waypoint indices to strings and add prefix 'r'
-            string waypoint_from = "wp" + to_string(i) ;
-            string waypoint_to = "wp" + to_string(j);
+  // Generate the adjacency matrix
+  for (int i = 0; i < numWaypoints; i++)
+  {
+    // Make a copy of the i-th row of the distances matrix
+    for (int j = 0; j < numWaypoints; j++)
+      node_i_distances[j] = dist_matrix[i][j];
 
-            // Compute Euclidean distance between waypoints 'from' and 'to'
-            dist_matrix[i][j] = distance_euc(waypoint_from , waypoint_to);
+    for (int j = 0; j < k; j++)
+    {
+      min_dist_idx = findMinimumIndex(node_i_distances);
 
-            // Store the distance in an array for finding minimum distances
-            dist_array[j] = dist_matrix[i][j]; 
-        } 
-        else {
-            // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
-            // Since that if i=j, then it does not makes sense to compute a distance 
-            // And we want to set something as high as possible so that it could not be detected as a minimum
-            // It could also be possible to omit the else statement (?? it depends on the other functions)
-            dist_matrix[i][j] = 1000.0; 
-            dist_array[j] = dist_matrix[i][j];
-        }
+      if (numConnections[i] < k && numConnections[min_dist_idx] < k)
+      {
+        adj_matrix[i][min_dist_idx] = dist_matrix[i][min_dist_idx];
+        adj_matrix[min_dist_idx][i] = dist_matrix[min_dist_idx][i];
+        numConnections[i]++;
+        numConnections[min_dist_idx]++;
       }
-
-      // Connect the current waypoint to the closest waypoints until the number of connections reaches k
-      while (numConnections[i] < k && flag < numWaypoints) {
-          // Find the index of the minimum distance in an array
-          min_dist_idx = findMinimumIndex(dist_array); 
-
-          if (numConnections[min_dist_idx] < k) {
-              // If the closest waypoint is not already connected to k waypoints, connect it to the current one
-              adj_matrix[i][min_dist_idx] = 1;
-              adj_matrix[min_dist_idx][i] = 1;
-              numConnections[i]++;
-              numConnections[min_dist_idx]++;
-          } 
-          else {
-              flag++; 
-          }
-      }
+    }
   }
 }
 
@@ -365,8 +350,8 @@ double VisitSolver::compute_path(string from, string to)
 		{
       // Update dist[i] only if is not in visited, there is an edge from u to i, and total
       // weight of path from min_idx to i through u is smaller than current value of dist[i]
-			if (!visited[i] && dist_matrix[u][i] && dist[u] != 1000.0 && dist[u] + dist_matrix[u][i] < dist[i])
-				dist[i] = dist[u] + dist_matrix[u][i];
+			if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
+				dist[i] = dist[u] + adj_matrix[u][i];
 		}
   }
 
