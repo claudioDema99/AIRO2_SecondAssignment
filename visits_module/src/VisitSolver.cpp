@@ -74,9 +74,11 @@ void VisitSolver::loadSolver(string *parameters, int n){
     std::cout << "Valid value entered: " << k << std::endl;
 
     string waypoint_file = "./waypoint.txt";
-    randWaypointGenerator(waypoint_file);                             
-    parseWaypoint(waypoint_file);
-
+    // Generate random waypoints 
+    randWaypointGenerator(waypoint_file);
+    // Parse the waypoint file                            
+    parseWaypoint(waypoint_file);          
+    // Build the graph
     buildGraph();                                        
 }
 
@@ -114,13 +116,14 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
           string to = tmp.substr(3,2);
 
           // The cost is equal to the total path covered by the robot
-          act_cost = compute_path(from, to)
+          act_cost = compute_path(from, to);
           if (act_cost >= 1000.0){
             act_cost = -1000.0;
           }
         }
       }
     }else{
+
       if(function=="dummy"){
         dummy = act_cost;
       }
