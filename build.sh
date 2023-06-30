@@ -16,6 +16,7 @@ rm -f -r ./visits_module/build
 
 # Builds the external module
 cd ./visits_module/src
+chmod +x ./buildInstruction.txt
 ./buildInstruction.txt
 
 printf "\n${GREEN}Build completed!\n\n"

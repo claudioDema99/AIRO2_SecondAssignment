@@ -60,18 +60,18 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/manudelu/Desktop/AI4RO2/tutorial/visits_module/src
+CMAKE_SOURCE_DIR = /home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/manudelu/Desktop/AI4RO2/tutorial/visits_module/build
+CMAKE_BINARY_DIR = /home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/build
 
 #=============================================================================
 # Targets provided globally by CMake.
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -90,9 +90,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/manudelu/Desktop/AI4RO2/tutorial/visits_module/build/CMakeFiles /home/manudelu/Desktop/AI4RO2/tutorial/visits_module/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/build/CMakeFiles /home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/manudelu/Desktop/AI4RO2/tutorial/visits_module/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -151,7 +151,6 @@ ExternalSolver.o: ExternalSolver.cpp.o
 # target to build an object file
 ExternalSolver.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visits.dir/build.make CMakeFiles/Visits.dir/ExternalSolver.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VisitMain.dir/build.make CMakeFiles/VisitMain.dir/ExternalSolver.cpp.o
 .PHONY : ExternalSolver.cpp.o
 
 ExternalSolver.i: ExternalSolver.cpp.i
@@ -160,7 +159,6 @@ ExternalSolver.i: ExternalSolver.cpp.i
 # target to preprocess a source file
 ExternalSolver.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visits.dir/build.make CMakeFiles/Visits.dir/ExternalSolver.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VisitMain.dir/build.make CMakeFiles/VisitMain.dir/ExternalSolver.cpp.i
 .PHONY : ExternalSolver.cpp.i
 
 ExternalSolver.s: ExternalSolver.cpp.s
@@ -169,7 +167,6 @@ ExternalSolver.s: ExternalSolver.cpp.s
 # target to generate assembly for a file
 ExternalSolver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visits.dir/build.make CMakeFiles/Visits.dir/ExternalSolver.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VisitMain.dir/build.make CMakeFiles/VisitMain.dir/ExternalSolver.cpp.s
 .PHONY : ExternalSolver.cpp.s
 
 VisitSolver.o: VisitSolver.cpp.o
@@ -178,7 +175,6 @@ VisitSolver.o: VisitSolver.cpp.o
 # target to build an object file
 VisitSolver.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visits.dir/build.make CMakeFiles/Visits.dir/VisitSolver.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VisitMain.dir/build.make CMakeFiles/VisitMain.dir/VisitSolver.cpp.o
 .PHONY : VisitSolver.cpp.o
 
 VisitSolver.i: VisitSolver.cpp.i
@@ -187,7 +183,6 @@ VisitSolver.i: VisitSolver.cpp.i
 # target to preprocess a source file
 VisitSolver.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visits.dir/build.make CMakeFiles/Visits.dir/VisitSolver.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VisitMain.dir/build.make CMakeFiles/VisitMain.dir/VisitSolver.cpp.i
 .PHONY : VisitSolver.cpp.i
 
 VisitSolver.s: VisitSolver.cpp.s
@@ -196,7 +191,6 @@ VisitSolver.s: VisitSolver.cpp.s
 # target to generate assembly for a file
 VisitSolver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visits.dir/build.make CMakeFiles/Visits.dir/VisitSolver.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VisitMain.dir/build.make CMakeFiles/VisitMain.dir/VisitSolver.cpp.s
 .PHONY : VisitSolver.cpp.s
 
 main.o: main.cpp.o

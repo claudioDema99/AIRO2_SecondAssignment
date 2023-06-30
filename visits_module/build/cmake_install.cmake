@@ -1,4 +1,4 @@
-# Install script for directory: /home/manudelu/Desktop/AI4RO2/tutorial/visits_module/src
+# Install script for directory: /home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/manudelu/Desktop/AI4RO2/tutorial/visits_module/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/gianluca/Documents/GitHub/AIRO2_SecondAssignment/visits_module/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
