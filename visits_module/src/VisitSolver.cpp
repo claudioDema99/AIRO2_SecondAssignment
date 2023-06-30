@@ -212,21 +212,6 @@ void VisitSolver::parseWaypoint(string waypoint_file){
   }
 }
 
-// Function used to compute the euclidean distance between two waypoints
-double VisitSolver::distance_euc(string from, string to)
-{
-   // Obtaining geometric vectors from region names
-   vector<double> from_wp = waypoint[region_mapping[from][0]];
-   vector<double> to_wp = waypoint[region_mapping[to][0]];
-   
-   // Computing distance (squared) from vectors
-   double distance = 0;
-   for(int i=0; i<2; ++i)
-        distance += pow(from_wp[i] - to_wp[i], 2);
-   
-   // Returning euclidean distance
-   return sqrt(distance);
-}
 
 // Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
@@ -279,7 +264,7 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
 void VisitSolver::buildGraph(){
   int flag = 0;     // Used to avoid infinite loops
   int min_dist_idx;
-  int numConnections[numWaypoints] = {};      // Tracks the number of connections for each waypoint
+  int numConnections[numWaypoints] = { 0 };      // Tracks the number of connections for each waypoint
 
   // Iterate over each waypoint
   for (int i = 0; i < numWaypoints; i++) {
@@ -290,8 +275,8 @@ void VisitSolver::buildGraph(){
 
         if (i != j) {
             // Convert waypoint indices to strings and add prefix 'r'
-            string waypoint_from = "r" + to_string(i) ;
-            string waypoint_to = "r" + to_string(j);
+            string waypoint_from = "wp" + to_string(i) ;
+            string waypoint_to = "wp" + to_string(j);
 
             // Compute Euclidean distance between waypoints 'from' and 'to'
             dist_matrix[i][j] = distance_euc(waypoint_from , waypoint_to);
@@ -327,6 +312,22 @@ void VisitSolver::buildGraph(){
       }
   }
 }
+
+
+// Function used to compute the euclidean distance between two waypoints
+double VisitSolver::distance_euc(string from, string to)
+{
+   float from_x = waypoint[from][0];
+   float from_y = waypoint[from][1];
+
+   float to_x = waypoint[to][0];
+   float to_y = waypoint[to][1];
+
+
+   float distance = pow((from_x - to_x), 2) + pow((from_y - to_y), 2);
+   return sqrt(distance);
+}
+
 
 // Function that implements Dijkstra's single source shortest path algorithm 
 // for a graph represented using adjacency matrix representation
