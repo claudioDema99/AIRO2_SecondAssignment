@@ -15,3 +15,25 @@ How to Run the Simulation
 
 To begin, please refer to the following GitHub repository for the installation of the [popf-tif planner](https://github.com/popftif/popf-tif). Once you have accessed the repository, proceed with installing the planner.
 
+After installing the popf-tif planner, proceed by cloning the repository:
+
+```bash
+git clone https://github.com/claudioDema99/AIRO2_SecondAssignment.git
+```
+
+You can already find the planner inside the `visit_domain` folder. Remember to change the permissions of **popf3-clp** by using the following command in the terminal: 
+
+```bash
+chmod +x popf3-clp
+```
+
+To run the entire project, simply navigate to the `visit_domain` folder and enter the following command in the terminal:
+
+```bash
+./popf3-clp -x dom1.pddl prob1.pddl ../visits_module/build/libVisits.so region_poses
+```
+
+
+
+
+
