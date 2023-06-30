@@ -49,7 +49,7 @@ VisitSolver::VisitSolver(){}
 VisitSolver::~VisitSolver(){}
 
 void VisitSolver::loadSolver(string *parameters, int n){
-  // initialize the starting position of the robot as r0 (0,0)
+  // Initialize the starting position of the robot as r0 (0,0)
   starting_position = "r0";
   string Paramers = parameters[0];
 
@@ -59,7 +59,7 @@ void VisitSolver::loadSolver(string *parameters, int n){
   affected = list<string>(x,x+1);
   dependencies = list<string>(y,y+2);
 
-  // Let the user enter a valid number of links 
+  // Let the user enter a valid number of links k
   do {
         std::cout << "Please insert the number of links between nodes (the number should be between 5 and 30): " << std::endl;
         std::cin >> k;
@@ -112,7 +112,7 @@ map<string,double> VisitSolver::callExternalSolver(map<string,double> initialSta
         trigger[arg] = value>0?1:0;
         if (value>0){
 
-          string from = tmp.substr(0,2);   // from and to are regions, need to extract wps (poses)
+          string from = tmp.substr(0,2); 
           string to = tmp.substr(3,2);
 
           // The cost is equal to the total path covered by the robot
@@ -213,9 +213,6 @@ void VisitSolver::parseWaypoint(string waypoint_file){
 
 // Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
-  const int numWaypoints = 30;  // Update the number of waypoints as needed
-  const int numCoordinates = 3; // Update the number of coordinates as needed
-
   float waypoints[numWaypoints][numCoordinates];
 
   ofstream outfile(waypoint_file);
@@ -257,103 +254,101 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
   outfile.close();
 }
 
-
 // This function builds a graph connecting each waypoint to a maximum of k other waypoints
-void VisitSolver::buildGraph(){
-  int min_dist_idx;
-  int numConnections[numWaypoints] = { 0 };  
-  double node_i_distances[numWaypoints];
+void VisitSolver::buildGraph() {
+  int numConnections[numWaypoints] = {};   // Array to store the number of connections for each waypoint
+  double nodeDistances[numWaypoints];      // Array to store the distances from the current waypoint to other waypoints
 
-  // Compute the distances between all the waypoints
-  for (int i = 0; i < numWaypoints; i++)
-  {
-    string from = "wp" + to_string(i);
-
-    for (int j = 0; j < numWaypoints; j++)
-    {
+  // Calculate distances between waypoints and populate the distance matrix
+  for (int i = 0; i < numWaypoints; i++) {
+    for (int j = 0; j < numWaypoints; j++) {
+      // Convert waypoint indices to strings and add prefix 'wp'
+      string from = "wp" + to_string(i);
       string to = "wp" + to_string(j);
-      dist_matrix[i][j] = (i != j) ? distance_euc(from, to) : 1000.0;
+      if (i != j)
+  	dist_matrix[i][j] = distance_euc(from, to);    // Calculate Euclidean distance between waypoints
+	else
+  	  dist_matrix[i][j] = 1000.0;  // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
     }
   }
 
-  // Generate the adjacency matrix
-  for (int i = 0; i < numWaypoints; i++)
-  {
-    // Make a copy of the i-th row of the distances matrix
-    for (int j = 0; j < numWaypoints; j++)
-      node_i_distances[j] = dist_matrix[i][j];
+  for (int i = 0; i < numWaypoints; i++) {
+    std::copy(dist_matrix[i], dist_matrix[i] + numWaypoints, nodeDistances);    // Copy distances for the current waypoint
 
-    for (int j = 0; j < k; j++)
-    {
-      min_dist_idx = findMinimumIndex(node_i_distances);
+    for (int j = 0; j < k; j++) {
+      int min_dist_idx = findMinimumIndex(nodeDistances);    // Find the index of the waypoint with the minimum distance
 
-      if (numConnections[i] < k && numConnections[min_dist_idx] < k)
-      {
-        adj_matrix[i][min_dist_idx] = dist_matrix[i][min_dist_idx];
-        adj_matrix[min_dist_idx][i] = dist_matrix[min_dist_idx][i];
-        numConnections[i]++;
-        numConnections[min_dist_idx]++;
+      // Connect the current waypoint and the waypoint with the minimum distance if the maximum number of connections is not exceeded
+      if (numConnections[i] < k && numConnections[min_dist_idx] < k) {
+        adj_matrix[i][min_dist_idx] = dist_matrix[i][min_dist_idx];    // Connect the waypoints in the adjacency matrix
+        adj_matrix[min_dist_idx][i] = dist_matrix[min_dist_idx][i];    // Connect the waypoints in the adjacency matrix (bidirectional)
+        numConnections[i]++;    // Increment the number of connections for the current waypoint
+        numConnections[min_dist_idx]++;    // Increment the number of connections for the waypoint with the minimum distance
       }
+
+      nodeDistances[min_dist_idx] = std::numeric_limits<double>::max();    // Set the distance to the maximum value to exclude it from future selections
     }
   }
 }
-
 
 // Function used to compute the euclidean distance between two waypoints
 double VisitSolver::distance_euc(string from, string to)
 {
+   // Retrieve the x and y coordinates of the 'from' waypoint
    float from_x = waypoint[from][0];
    float from_y = waypoint[from][1];
 
+   // Retrieve the x and y coordinates of the 'to' waypoint
    float to_x = waypoint[to][0];
    float to_y = waypoint[to][1];
 
-
+   // Compute the squared distance between the waypoints using the Euclidean distance formula
    float distance = pow((from_x - to_x), 2) + pow((from_y - to_y), 2);
+   
+   // Return the square root of the computed distance
    return sqrt(distance);
 }
 
-
-// Function that implements Dijkstra's single source shortest path algorithm 
-// for a graph represented using adjacency matrix representation
+// Function that implements Dijkstra's shortest path algorithm for a graph represented using adjacency matrix representation
 double VisitSolver::compute_path(string from, string to)
 {
   // Extract the start and end indices
   int from_idx = extract_num(from);
   int to_idx = extract_num(to);
+  //std::cout << "from: " << from_idx << "  to: " << to_idx << std::endl;
 
-  // visited[i] will be true if vertex i is included in shortest path tree or shortest distance from from_idx to i is finalized
-  bool visited[numWaypoints] = {false};
-  // The output array.  dist[i] will hold the shortest distance from from_idx to i
+  // The output array.  dist[i] will hold the shortest distance from "from_idx" to "i"
   double dist[numWaypoints]; 
-  // Distance of from_idx vertex from itself is always 0  
+  // visited[i] will be true if waypoint "i" is included in shortest path tree or shortest distance from "from_idx" to "i" is finalized
+  bool visited[numWaypoints] = {false};
+  
+  // Distance of "from_idx" waypoint from itself is always 0  
   dist[from_idx] = 0;
  
-  // Initialize all distances as INFINITE
   for (int i = 0; i < numWaypoints; i++) {
     if (i != from_idx)
       dist[i] = 1000.0;
   }
 
-  // Find shortest path for all vertices
+  // Find shortest path for all waypoints
   for (int i = 0; i < numWaypoints - 1; i++)
   {
-    // Pick the minimum distance vertex from the set of vertices not yet processed 
-    // u is always equal to from_idx in the first iteration
+    // Pick the minimum distance waypoint from the set of waypoints not yet processed 
+    // "u" is always equal to "from_idx" in the first iteration
     int u = minDistance(dist, visited);
 
-    // Mark the picked vertex as processed
-		visited[u] = true;
+    // Mark the picked waypoints as processed
+    visited[u] = true;
 
-    // Update dist value of the adjacent vertices of the picked vertex
-		for (int i = 0; i < numWaypoints; i++)                  
-		{
-      // Update dist[i] only if is not in visited, there is an edge from u to i, and total
-      // weight of path from min_idx to i through u is smaller than current value of dist[i]
-			if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
-				dist[i] = dist[u] + adj_matrix[u][i];
-		}
-  }
+    // Update dist value of the adjacent waypoints of the picked vertex
+    for (int i = 0; i < numWaypoints; i++)                  
+    {
+      // Update dist[i] only if is not in visited, there is an edge from "u" to "i", and total
+      // weight of path from "from_idx" to "i" through "u" is smaller than current value of dist[i]
+      if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
+        dist[i] = dist[u] + adj_matrix[u][i];
+      }
+    }
 
   return dist[to_idx];
 }
@@ -375,35 +370,48 @@ int VisitSolver::findMinimumIndex(double dist_array[]) {
     return minIndex;
 }
 
-// A useful function to find the vertex with minimum distance value, 
-// from the set of vertices not yet included in shortest path tree
+// This function finds the index of the vertex with the minimum distance value from the set of vertices not yet included in the shortest path tree
 int VisitSolver::minDistance(double dist[], bool visited[])
 {
     // Initialize min value
     double min = 1000.0;
     int min_index = -1;
- 
-    for (int i = 0; i < numWaypoints; i++)
+    
+    // Iterate over all waypoints to find the vertex with the minimum distance value
+    for (int i = 0; i < numWaypoints; i++) {
+        // Check if the waypoint is not yet visited and its distance is less than or equal to the current minimum distance
         if (visited[i] == false && dist[i] <= min)
-          min = dist[i], min_index = i;
- 
+          min = dist[i], min_index = i; // Update the minimum distance and the index of the waypoint with the minimum distance
+    }
+    
+    // Return the index of the vertex with the minimum distance value
     return min_index;
 }
 
-// Extract Num DA RIFARE
-int VisitSolver::extract_num(string str)
-{
-  string num; // Initialize an empty string to store extracted digits from the input string
+// This function extracts the numerical digits from the input string and returns the resulting integer value
+int VisitSolver::extract_num(string str) {
+  string extractedDigits;
 
   // Iterate over each character in the input string
-  for (char c : str)
-  {
+  for (char c : str) {
     // Check if the character is a digit
-    if (isdigit(c))
-      num += c; // If it is a digit, append it to the 'num' string
+    if (isdigit(c)) {
+      extractedDigits += c; // If it is a digit, append it to the 'extractedDigits' string
+    }
   }
-  
-  if (num.empty()) return -1; // If 'num' is empty, no digits were found, so return -1
-  
-  return stoi(num); // Convert the extracted digits in 'num' to an integer and return it
+
+  if (extractedDigits.empty()) {
+    return -1; // If 'extractedDigits' is empty, no digits were found, so return -1
+  }
+
+  int extractedNum;
+  try {
+    extractedNum = stoi(extractedDigits); // Convert the extracted digits in 'extractedDigits' to an integer
+  } catch (const std::exception& e) {
+    // Handle exception if conversion fails
+    std::cerr << "Exception caught: " << e.what() << std::endl;
+    return -1;
+  }
+
+  return extractedNum;
 }

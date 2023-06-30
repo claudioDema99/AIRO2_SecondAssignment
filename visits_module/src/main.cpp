@@ -39,30 +39,6 @@ int main(int argc, char **argv) {
     region.push_back("r3"); 
     region.push_back("r4"); 
     region.push_back("r5");
-    region.push_back("r6"); 
-    region.push_back("r7"); 
-    region.push_back("r8"); 
-    region.push_back("r9");
-    region.push_back("r10"); 
-    region.push_back("r11"); 
-    region.push_back("r12"); 
-    region.push_back("r13"); 
-    region.push_back("r14");
-    region.push_back("r15"); 
-    region.push_back("r16"); 
-    region.push_back("r17"); 
-    region.push_back("r18"); 
-    region.push_back("r19");
-    region.push_back("r20"); 
-    region.push_back("r21"); 
-    region.push_back("r22"); 
-    region.push_back("r23"); 
-    region.push_back("r24");
-    region.push_back("r25"); 
-    region.push_back("r26"); 
-    region.push_back("r27"); 
-    region.push_back("r28"); 
-    region.push_back("r29"); 
   
     // store the initial state fluents
     for (int i=0; i<region.size(); i++){ 

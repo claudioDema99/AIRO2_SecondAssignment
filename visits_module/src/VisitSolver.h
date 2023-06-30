@@ -57,7 +57,6 @@ private:
 
     int k;
     double dist_matrix[numWaypoints][numWaypoints] = {};
-    double dist_array[numWaypoints] = {};
     double adj_matrix[numWaypoints][numWaypoints] = {};
 
     vector<string> findParameters(string line, int&n);
@@ -70,7 +69,6 @@ private:
     int findMinimumIndex(double dist_array[]);
     int minDistance(double dist[], bool visited[]);
     int extract_num(string str);
-    bool checkWaypoint(double waypoint_x, double waypoint_y);
 };
 
 #endif // TESTSOLVER_H
