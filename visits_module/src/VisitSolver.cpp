@@ -365,8 +365,8 @@ double VisitSolver::compute_path(string from, string to)
 		{
       // Update dist[i] only if is not in visited, there is an edge from u to i, and total
       // weight of path from min_idx to i through u is smaller than current value of dist[i]
-			if (!visited[i] && adj_matrix[u][i] && dist[u] != 1000.0 && dist[u] + adj_matrix[u][i] < dist[i])
-				dist[i] = dist[u] + adj_matrix[u][i];
+			if (!visited[i] && dist_matrix[u][i] && dist[u] != 1000.0 && dist[u] + dist_matrix[u][i] < dist[i])
+				dist[i] = dist[u] + dist_matrix[u][i];
 		}
   }
 
