@@ -68,8 +68,9 @@ private:
     void buildGraph();
     double compute_path(string from, string to);
     int findMinimumIndex(double dist_array[]);
-    int minDistance(int dist[], bool visited[]);
+    int minDistance(double dist[], bool visited[]);
     int extract_num(string str);
+    bool checkWaypoint(double waypoint_x, double waypoint_y);
 };
 
 #endif // TESTSOLVER_H

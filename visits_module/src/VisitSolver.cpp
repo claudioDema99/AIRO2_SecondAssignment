@@ -160,13 +160,16 @@ void VisitSolver::parseParameters(string parameters){
   string line;
   ifstream parametersFile(parameters.c_str());
   if (parametersFile.is_open()){
+
     while (getline(parametersFile,line)){
       curr=line.find(" ");
       string region_name = line.substr(0,curr).c_str();
       curr=curr+1;
+
       while(true ){
         next=line.find(" ",curr);
         region_mapping[region_name].push_back(line.substr(curr,next-curr).c_str());
+
         if (next ==-1)
           break;
         curr=next+1;
@@ -227,48 +230,76 @@ double VisitSolver::distance_euc(string from, string to)
 
 // Function that, additionally to the already existing 6 waypoints, generates 24 new random waypoints
 void VisitSolver::randWaypointGenerator(string waypoint_file) {
-    // numWaypoints and numCoordinates defined globally
-    float waypoints[numWaypoints][numCoordinates];      // Array to store the coordinates of waypoints
+  const int numWaypoints = 30;  // Update the number of waypoints as needed
+  const int numCoordinates = 3; // Update the number of coordinates as needed
 
-    std::ofstream outfile(waypoint_file);      // Open the file 
+  float waypoints[numWaypoints][numCoordinates];
 
-    if (!outfile) {
-        std::cerr << "Error opening file... " << std::endl;
-        return;
+  ofstream outfile(waypoint_file);
+
+  if (!outfile) {
+    cerr << "Error opening file: " << waypoint_file << endl;
+    return;
+  }
+
+  outfile.clear();
+
+  // Write the known waypoints to the file
+  outfile << "wp0[0,0,0]" << endl;
+  outfile << "wp1[-2.5,2.5,0]" << endl;
+  outfile << "wp2[2.5,2.5,0]" << endl;
+  outfile << "wp3[-2.5,-2.5,0]" << endl;
+  outfile << "wp4[2.5,-2.5,0]" << endl;
+  outfile << "wp5[3,0,0]" << endl;
+
+  random_device random;
+  mt19937 gen(random());
+  uniform_real_distribution<> dis(-3.0, 3.0);
+
+  // Generate random x and y values for the waypoints
+  for (int i = 6; i < numWaypoints; i++) {
+    bool validWaypoint = false;
+    double waypoint_x, waypoint_y;
+
+    while (!validWaypoint) {
+      waypoint_x = round(dis(gen) * 100.0) / 100.0;
+      waypoint_y = round(dis(gen) * 100.0) / 100.0;
+
+      validWaypoint = checkWaypoint(waypoint_x, waypoint_y);
     }
 
-    outfile.clear();     // Clear the contents of the file
+    waypoints[i][0] = waypoint_x;
+    waypoints[i][1] = waypoint_y;
+    waypoints[i][2] = 0.0;
 
-    // Write on the file the six waypoints that are already known
-    outfile << "wp0[0,0,0]" << std::endl;   
-    outfile << "wp1[-2.5,2.5,0]" << std::endl;
-    outfile << "wp2[2.5,2.5,0]" << std::endl;
-    outfile << "wp3[-2.5,-2.5,0]" << std::endl;
-    outfile << "wp4[2.5,-2.5,0]" << std::endl;
-    outfile << "wp5[3,0,0]" << std::endl;
+    outfile << "wp" << i << "[" << fixed << setprecision(2) << waypoints[i][0] << ",";
+    outfile << fixed << setprecision(2) << waypoints[i][1] << ",";
+    outfile << 0 << "]" << endl;
+  }
 
-    std::random_device random;         // Create a random number generator
-    std::mt19937 gen(random());        // Seed the generator with a random device 
-    std::uniform_real_distribution<> dis(-3.0, 3.0);      // Create a uniform distribution between -3.0 and 3.0
-
-    // Generate random x and y values for the waypoints
-    for (int i = 6; i < numWaypoints; i++) {         
-        for (int j = 0; j < numCoordinates; j++) {
-            waypoints[i][j] = std::round(dis(gen) * 100.0) / 100.0;   
-
-            if (j == 0) {
-              outfile << "wp" << i << "[" << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
-            }
-            else if (j == 1) {
-                outfile << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
-            } else {
-                outfile << 0 << "]" << std::endl;
-            }
-        }
-    }
-
-    outfile.close();   // Close the file
+  outfile.close();
 }
+
+
+// Function that checks if a waypoint is valid
+bool VisitSolver::checkWaypoint(double waypoint_x, double waypoint_y) {
+
+  // Initial position
+  bool isInitialPosition = (waypoint_x == 0 && waypoint_y == 0);
+
+  // Table positions
+  bool isTopLeftTable = (waypoint_x >= -3 && waypoint_x <= -2 && waypoint_y >= 2 && waypoint_y <= 3);
+  bool isTopRightTable = (waypoint_x >= 2 && waypoint_x <= 3 && waypoint_y >= 2 && waypoint_y <= 3);
+  bool isBottomLeftTable = (waypoint_x >= -3 && waypoint_x <= -2 && waypoint_y >= -3 && waypoint_y <= -2);
+  bool isBottomRightTable = (waypoint_x >= 2 && waypoint_x <= 3 && waypoint_y >= -3 && waypoint_y <= -2);
+
+  // Submission desk position
+  bool isSubmissionDesk = (waypoint_x == 3 && waypoint_y == 0);
+
+  return isInitialPosition || isTopLeftTable || isTopRightTable ||
+         isBottomLeftTable || isBottomRightTable || isSubmissionDesk;
+}
+
 
 // This function builds a graph connecting each waypoint to a maximum of k other waypoints
 void VisitSolver::buildGraph(){
@@ -348,7 +379,7 @@ double VisitSolver::compute_path(string from, string to)
   {
     // Pick the minimum distance vertex from the set of vertices not yet processed 
     // u is always equal to from_idx in the first iteration
-    int u = min_dist(dist, visited);
+    int u = minDistance(dist, visited);
 
     // Mark the picked vertex as processed
 		visited[u] = true;
@@ -385,7 +416,7 @@ int VisitSolver::findMinimumIndex(double dist_array[]) {
 
 // A useful function to find the vertex with minimum distance value, 
 // from the set of vertices not yet included in shortest path tree
-int VisitSolver::minDistance(int dist[], bool visited[])
+int VisitSolver::minDistance(double dist[], bool visited[])
 {
     // Initialize min value
     int min = 1000.0;
