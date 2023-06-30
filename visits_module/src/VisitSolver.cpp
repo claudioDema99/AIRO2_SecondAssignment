@@ -242,62 +242,36 @@ void VisitSolver::randWaypointGenerator(string waypoint_file) {
     return;
   }
 
-  outfile.clear();
+    outfile.clear();     // Clear the contents of the file
 
-  // Write the known waypoints to the file
-  outfile << "wp0[0,0,0]" << endl;
-  outfile << "wp1[-2.5,2.5,0]" << endl;
-  outfile << "wp2[2.5,2.5,0]" << endl;
-  outfile << "wp3[-2.5,-2.5,0]" << endl;
-  outfile << "wp4[2.5,-2.5,0]" << endl;
-  outfile << "wp5[3,0,0]" << endl;
+    // Write on the file the six waypoints that are already known
+    outfile << "wp0[0,0,0]" << std::endl;
+    outfile << "wp1[-2.5,2.5,0]" << std::endl;
+    outfile << "wp2[2.5,2.5,0]" << std::endl;
+    outfile << "wp3[-2.5,-2.5,0]" << std::endl;
+    outfile << "wp4[2.5,-2.5,0]" << std::endl;
+    outfile << "wp5[3,0,0]" << std::endl;
 
-  random_device random;
-  mt19937 gen(random());
-  uniform_real_distribution<> dis(-3.0, 3.0);
+    std::random_device random;         // Create a random number generator
+    std::mt19937 gen(random());        // Seed the generator with a random device 
+    std::uniform_real_distribution<> dis(-3.0, 3.0);      // Create a uniform distribution between -3.0 and 3.0
 
-  // Generate random x and y values for the waypoints
-  for (int i = 6; i < numWaypoints; i++) {
-    bool validWaypoint = false;
-    double waypoint_x, waypoint_y;
+    // Generate random x and y values for the waypoints
+    for (int i = 6; i < numWaypoints; i++) {
+        for (int j = 0; j < numCoordinates; j++) {
+            waypoints[i][j] = std::round(dis(gen) * 100.0) / 100.0;
 
-    while (!validWaypoint) {
-      waypoint_x = round(dis(gen) * 100.0) / 100.0;
-      waypoint_y = round(dis(gen) * 100.0) / 100.0;
-
-      validWaypoint = checkWaypoint(waypoint_x, waypoint_y);
+            if (j == 0) {
+              outfile << "wp" << i << "[" << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
+            }
+            else if (j == 1) {
+                outfile << std::fixed << std::setprecision(2) << waypoints[i][j] << ",";
+            } else {
+                outfile << 0 << "]" << std::endl;
+            }
+        }
     }
-
-    waypoints[i][0] = waypoint_x;
-    waypoints[i][1] = waypoint_y;
-    waypoints[i][2] = 0.0;
-
-    outfile << "wp" << i << "[" << fixed << setprecision(2) << waypoints[i][0] << ",";
-    outfile << fixed << setprecision(2) << waypoints[i][1] << ",";
-    outfile << 0 << "]" << endl;
-  }
-
   outfile.close();
-}
-
-
-// Function that checks if a waypoint is valid
-bool VisitSolver::checkWaypoint(double waypoint_x, double waypoint_y) {
-
-  // Initial position
-  bool isInitialPosition = (waypoint_x == 0 && waypoint_y == 0);
-
-  // Table positions
-  bool isTopLeftTable = (waypoint_x >= -3 && waypoint_x <= -2 && waypoint_y >= 2 && waypoint_y <= 3);
-  bool isTopRightTable = (waypoint_x >= 2 && waypoint_x <= 3 && waypoint_y >= 2 && waypoint_y <= 3);
-  bool isBottomLeftTable = (waypoint_x >= -3 && waypoint_x <= -2 && waypoint_y >= -3 && waypoint_y <= -2);
-  bool isBottomRightTable = (waypoint_x >= 2 && waypoint_x <= 3 && waypoint_y >= -3 && waypoint_y <= -2);
-
-  // Submission desk position
-  bool isSubmissionDesk = (waypoint_x == 3 && waypoint_y == 0);
-
-  return isInitialPosition || isTopLeftTable || isTopRightTable ||
-         isBottomLeftTable || isBottomRightTable || isSubmissionDesk;
 }
 
 
