@@ -266,9 +266,9 @@ void VisitSolver::buildGraph() {
       string from = "wp" + to_string(i);
       string to = "wp" + to_string(j);
       if (i != j)
-  	dist_matrix[i][j] = distance_euc(from, to);    // Calculate Euclidean distance between waypoints
-	else
-  	  dist_matrix[i][j] = 1000.0;  // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
+  	    dist_matrix[i][j] = distance_euc(from, to);    // Calculate Euclidean distance between waypoints
+      else
+        dist_matrix[i][j] = 1000.0;  // Set a high value for elements on the diagonal to avoid interference in finding the minimum distance
     }
   }
 
